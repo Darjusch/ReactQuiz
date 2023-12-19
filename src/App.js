@@ -6,7 +6,6 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import { QUIZZ_QUESTIONS } from "./questions";
 
 // TODO
-// Refactor to use reducer instead of useState
 // Refactor code better naming and cleaner
 // Make smaller and reusable components
 
@@ -18,71 +17,48 @@ function formatTime(seconds) {
   ).padStart(2, "0")}`;
 }
 
-function reducer(state, action) {
+const initialState = {
+  questions: QUIZZ_QUESTIONS,
+  currentQuestion: 0,
+  selectedOption: null,
+  points: 0,
+  gameOver: false,
+  timer: 5 * 60,
+};
+
+const appReducer = (state, action) => {
   switch (action.type) {
-    case "next":
-      return {
-        ...state,
-        currentQuestion: state.currentQuestion + 1,
-        selectedOption: null,
-      };
-    case "select":
-      return {
-        ...state,
-        selectedOption: action.payload,
-      };
-    case "gameOver":
-      return {
-        ...state,
-        gameOver: true,
-      };
-    case "timer":
-      return {
-        ...state,
-        timer: state.timer - 1,
-      };
-    case "points":
-      return {
-        ...state,
-        points: state.points + action.payload,
-      };
+    case "SET_SELECTED_OPTION":
+      return { ...state, selectedOption: action.payload };
+    case "SET_POINTS":
+      return { ...state, points: state.points + action.payload };
+    case "SET_GAME_OVER":
+      return { ...state, gameOver: true };
+    case "SET_CURRENT_QUESTION":
+      return { ...state, currentQuestion: state.currentQuestion + 1 };
+    case "SET_TIMER":
+      return { ...state, timer: state.timer - 1 };
     default:
-      throw new Error();
+      return state;
   }
-}
+};
 
 function App() {
-  const [questions, setQuestions] = useState(QUIZZ_QUESTIONS);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  // const [questions, dispatch] = useReducer(reducer, QUIZZ_QUESTIONS);
+  const [state, dispatch] = useReducer(appReducer, initialState);
 
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [points, setPoints] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
-  const initialTimerValue = 5 * 60; // 5 minutes in seconds
-
-  const [timer, setTimer] = useState(initialTimerValue);
-
-  console.log(questions);
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setTimer((prevTimer) => {
-        if (prevTimer > 0) {
-          return prevTimer - 1;
-        } else {
-          clearInterval(intervalId); // Stop the countdown when it reaches zero
-          handleTimerEnd(); // Trigger an event when the timer reaches 0
-          return 0;
-        }
-      });
+      dispatch({ type: "SET_TIMER" });
     }, 1000);
 
     return () => clearInterval(intervalId); // Cleanup the interval on component unmount
   }, []); // Empty dependency array ensures the effect runs once on mount
 
-  const handleTimerEnd = () => {
-    setGameOver(true);
-  };
+  useEffect(() => {
+    if (state.timer === 0) {
+      dispatch({ type: "SET_GAME_OVER" });
+    }
+  }, [state.timer]);
 
   return (
     <div className="App">
@@ -90,66 +66,78 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <h1 className="App-title">THE REACT QUIZ</h1>
       </header>
-      {gameOver ? (
-        <h1>GAME OVER - YOU REACHED {points} POINTS !</h1>
+      {state.gameOver ? (
+        <h1>GAME OVER - YOU REACHED {state.points} POINTS !</h1>
       ) : (
         <div className="App-body">
           <div className="App-progressbar">
-            <ProgressBar now={currentQuestion} max={questions.length} />
+            <ProgressBar
+              now={state.currentQuestion}
+              max={state.questions.length}
+            />
             <div className="App-progress-labels">
               <p>
-                Questions {currentQuestion + 1}/{questions.length}
+                Questions {state.currentQuestion + 1}/{state.questions.length}
               </p>
-              <p>{points} points</p>
+              <p>{state.points} points</p>
             </div>
           </div>
           <div className="App-questions-container">
             <h2
               className="App-question"
-              key={questions[currentQuestion].question}
+              key={state.questions[state.currentQuestion].question}
             >
-              {questions[currentQuestion].question}
+              {state.questions[state.currentQuestion].question}
             </h2>
-            {questions[currentQuestion].options.map((option, optionIndex) => (
-              <button
-                className={`App-option ${
-                  selectedOption === option
-                    ? questions[currentQuestion].correctOption === optionIndex
-                      ? "App-option-correct-selected"
-                      : "App-option-wrong-selected"
-                    : ""
-                }`}
-                key={optionIndex}
-                disabled={selectedOption !== null}
-                onClick={() => {
-                  setSelectedOption(option);
-                }}
-              >
-                {option}
-              </button>
-            ))}
+            {state.questions[state.currentQuestion].options.map(
+              (option, optionIndex) => (
+                <button
+                  className={`App-option ${
+                    state.selectedOption === option
+                      ? state.questions[state.currentQuestion].correctOption ===
+                        optionIndex
+                        ? "App-option-correct-selected"
+                        : "App-option-wrong-selected"
+                      : ""
+                  }`}
+                  key={optionIndex}
+                  disabled={state.selectedOption !== null}
+                  onClick={() => {
+                    dispatch({ type: "SET_SELECTED_OPTION", payload: option });
+                  }}
+                >
+                  {option}
+                </button>
+              )
+            )}
           </div>
           <div className="App-bottom">
             <div className="App-timer">
-              <p>{formatTime(timer)}</p>
+              <p>{formatTime(state.timer)}</p>
             </div>
             <button
               className="App-button-next"
               disabled={
-                selectedOption === null || currentQuestion === questions.length
+                state.selectedOption === null ||
+                state.currentQuestion === state.questions.length
               }
               onClick={() => {
                 if (
-                  questions[currentQuestion].correctOption ===
-                  questions[currentQuestion].options.indexOf(selectedOption)
+                  state.questions[state.currentQuestion].correctOption ===
+                  state.questions[state.currentQuestion].options.indexOf(
+                    state.selectedOption
+                  )
                 ) {
-                  setPoints(points + questions[currentQuestion].points);
+                  dispatch({
+                    type: "SET_POINTS",
+                    payload: state.questions[state.currentQuestion].points,
+                  });
                 }
-                if (currentQuestion === questions.length - 1) {
-                  setGameOver(true);
+                if (state.currentQuestion === state.questions.length - 1) {
+                  dispatch({ type: "SET_GAME_OVER" });
                 }
-                setCurrentQuestion(currentQuestion + 1);
-                setSelectedOption(null);
+                dispatch({ type: "SET_CURRENT_QUESTION" });
+                dispatch({ type: "SET_SELECTED_OPTION", payload: null });
               }}
             >
               Next
