@@ -3,7 +3,7 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 20vmin;
   pointer-events: none;
 }
 
@@ -12,27 +12,127 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+.App-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.App-title {
+  font-size: 5.5em;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.App-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.App-option {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  margin: 10px auto; /* Center the option horizontally */
+  padding: 15px;
+  border: 1px solid black;
+  border-radius: 25px;
+  cursor: pointer;
+  background-color: #ed9933;
+  color: black;
+  font-weight: 500;
+  width: 700px; /* Adjust the width as needed */
+}
+
+.App-option-correct-selected {
+  background-color: #61dafb;
+  color: white;
+  font-weight: 500;
+  margin-left: 10%;
+}
+
+.App-option-wrong-selected {
+  background-color: #ed9933;
+  color: black;
+  font-weight: 500;
+  margin-left: 10%;
+}
+
+.App-progressbar {
+  width: 50%;
+  height: 5em;
+  margin-top: 30px;
+}
+
+.App-question {
+  margin-bottom: 25px;
+}
+
+.App-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.App-bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 25px;
+  margin-right: 25px;
+  height: 50px;
+  width: 100%;
+}
+
+.App-timer {
+  border: 1px solid white;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.App-button-next {
+  background-color: #61dafb;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease; /* Add a smooth transition effect */
+
+  /* Optional: Add hover styles */
+  &:hover {
+    background-color: #4fa3d1;
+  }
+
+  /* Optional: Add focus styles */
+  &:focus {
+    outline: none; /* Remove the default focus outline */
+    box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.7); /* Add a custom focus outline */
+  }
+
+  /* Optional: Add disabled styles */
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
 }
