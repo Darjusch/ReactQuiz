@@ -2,7 +2,7 @@
 import React from "react";
 import ProgressBar from "react-bootstrap/ProgressBar";
 
-function AppProgressBar({ currentQuestion, totalQuestions, points }) {
+function ProgressIndicator({ currentQuestion, totalQuestions, points }) {
   return (
     <div className="App-progressbar">
       <ProgressBar now={currentQuestion} max={totalQuestions} />
@@ -16,4 +16,4 @@ function AppProgressBar({ currentQuestion, totalQuestions, points }) {
   );
 }
 
-export default AppProgressBar;
+export default ProgressIndicator;

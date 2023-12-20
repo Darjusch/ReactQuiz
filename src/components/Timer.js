@@ -1,7 +1,7 @@
 // AppTimer.js
 import React from "react";
 
-function AppTimer({ timer }) {
+function Timer({ timer }) {
   return (
     <div className="App-timer">
       <p>{formatTime(timer)}</p>
@@ -9,7 +9,7 @@ function AppTimer({ timer }) {
   );
 }
 
-export default AppTimer;
+export default Timer;
 
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);

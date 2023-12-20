@@ -2,7 +2,7 @@
 import React from "react";
 import logo from "../logo.svg";
 
-function AppHeader() {
+function QuizzHeader() {
   return (
     <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />
@@ -11,4 +11,4 @@ function AppHeader() {
   );
 }
 
-export default AppHeader;
+export default QuizzHeader;
